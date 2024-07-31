@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Comparison Tool</title>
+    <style>
+        .similar { background-color: yellow; }
+        .exact { color: red; }
+        .different { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Text Comparison Tool</h1>
+    <input type="file" id="file1" accept=".txt">
+    <input type="file" id="file2" accept=".txt">
+    <button onclick="loadFiles()">Compare Files</button>
+    <div id="output"></div>
+
+    <script>
+        function loadFiles() {
+            const fileInput1 = document.getElementById('file1');
+            const fileInput2 = document.getElementById('file2');
+            if (fileInput1.files.length === 0 || fileInput2.files.length === 0) {
+                alert('Please upload both files before comparing.');
+                return;
+            }
+
+            const file1 = fileInput1.files[0];
+            const file2 = fileInput2.files[0];
+            const reader1 = new FileReader();
+            const reader2 = new FileReader();
+
+            reader1.onload = function(e) {
+                const text1 = e.target.result;
+                reader2.onload = function(e) {
+                    const text2 = e.target.result;
+                    compareTexts(text1, text2);
+                };
+                reader2.readAsText(file2);
+            };
+            reader1.readAsText(file1);
+        }
+
+        function compareTexts(text1, text2) {
+            const words1 = text1.split(/\s+/);
+            const words2 = text2.split(/\s+/);
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            let html = '';
+
+            words1.forEach(word1 => {
+                if (words2.includes(word1)) {
+                    html += `<span class="exact">${word1}</span> `;
+                } else {
+                    html += `<span class="different">${word1}</span> `;
+                }
+            });
+
+            html += '<br>';
+
+            words2.forEach(word2 => {
+                if (words1.includes(word2)) {
+                    html += `<span class="exact">${word2}</span> `;
+                } else {
+                    html += `<span class="different">${word2}</span> `;
+                }
+            });
+
+            output.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
